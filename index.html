@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Benzina</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .fuel-icon {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        button:active {
+            background: #0056CC;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 20px;
+            background: #4CAF50;
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+        
+        .result-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .result-label {
+            font-size: 1.2em;
+        }
+        
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fuel-icon">⛽</div>
+        <h1>Calcolatore Benzina</h1>
+        
+        <div class="input-group">
+            <label for="tankCapacity">Capacità serbatoio (ml):</label>
+            <input type="number" id="tankCapacity" min="1">
+        </div>
+        
+        <div class="input-group">
+            <label for="timeUsed">Tempo di utilizzo (minuti):</label>
+            <input type="number" id="timeUsed" min="1">
+        </div>
+        
+        <div class="input-group">
+            <label for="fuelRemaining">Benzina rimasta (ml):</label>
+            <input type="number" id="fuelRemaining" min="0">
+        </div>
+        
+        <button onclick="calculate()">Calcola Autonomia</button>
+        
+        <div id="result" class="result">
+            <div class="result-value" id="resultValue">0</div>
+            <div class="result-label">autonomia con serbatoio pieno</div>
+        </div>
+        
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        function calculate() {
+            var tankCapacity = parseFloat(document.getElementById('tankCapacity').value);
+            var timeUsed = parseFloat(document.getElementById('timeUsed').value);
+            var fuelRemaining = parseFloat(document.getElementById('fuelRemaining').value);
+            
+            document.getElementById('error').innerHTML = '';
+            document.getElementById('result').style.display = 'none';
+            
+            if (!tankCapacity || !timeUsed || fuelRemaining < 0) {
+                document.getElementById('error').innerHTML = 'Inserisci tutti i valori correttamente!';
+                return;
+            }
+            
+            if (fuelRemaining > tankCapacity) {
+                document.getElementById('error').innerHTML = 'La benzina rimasta non può essere maggiore della capacità!';
+                return;
+            }
+            
+            if (fuelRemaining === tankCapacity) {
+                document.getElementById('error').innerHTML = 'Non c\'è stato consumo di benzina!';
+                return;
+            }
+            
+            var fuelConsumed = tankCapacity - fuelRemaining;
+            
+            if (fuelConsumed <= 0) {
+                document.getElementById('error').innerHTML = 'Errore nel calcolo del consumo!';
+                return;
+            }
+            
+            var fuelConsumptionPerMinute = fuelConsumed / timeUsed;
+            var totalMinutesWithFullTank = tankCapacity / fuelConsumptionPerMinute;
+            
+            var minutes = Math.floor(totalMinutesWithFullTank);
+            var decimalPart = totalMinutesWithFullTank - minutes;
+            var seconds = Math.floor(decimalPart * 60 + 0.5);
+            
+            var resultText;
+            if (seconds === 0) {
+                resultText = minutes + 'm';
+            } else {
+                resultText = minutes + 'm ' + seconds + 's';
+            }
+            
+            document.getElementById('resultValue').innerHTML = resultText;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
