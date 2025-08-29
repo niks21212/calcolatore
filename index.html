@@ -5,95 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcolatore Benzina</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
-        
+
         .container {
             background: white;
-            border-radius: 10px;
-            padding: 30px;
-            max-width: 400px;
-            margin: 0 auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
         }
-        
+
         h1 {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
         }
-        
+
         .fuel-icon {
             text-align: center;
-            font-size: 3em;
+            font-size: 4em;
             margin-bottom: 20px;
         }
-        
+
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #555;
-            font-weight: bold;
+            font-weight: 500;
+            font-size: 1.1em;
         }
-        
+
         input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        
-        button {
-            width: 100%;
             padding: 15px;
-            background: #007AFF;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
             cursor: pointer;
-            margin-bottom: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 30px;
         }
-        
-        button:active {
-            background: #0056CC;
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
-        
+
         .result {
             text-align: center;
-            padding: 20px;
-            background: #4CAF50;
-            border-radius: 5px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
             color: white;
             display: none;
         }
-        
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .result-value {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        
+
         .result-label {
-            font-size: 1.2em;
+            font-size: 1.3em;
+            opacity: 0.9;
         }
-        
+
         .error {
-            color: red;
+            color: #e74c3c;
             text-align: center;
             margin-top: 10px;
-            font-weight: bold;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .result-value {
+                font-size: 2.5em;
+            }
         }
     </style>
 </head>
@@ -102,22 +146,24 @@
         <div class="fuel-icon">⛽</div>
         <h1>Calcolatore Benzina</h1>
         
-        <div class="input-group">
-            <label for="tankCapacity">Capacità serbatoio (ml):</label>
-            <input type="number" id="tankCapacity" min="1">
-        </div>
-        
-        <div class="input-group">
-            <label for="timeUsed">Tempo di utilizzo (minuti):</label>
-            <input type="number" id="timeUsed" min="1">
-        </div>
-        
-        <div class="input-group">
-            <label for="fuelRemaining">Benzina rimasta (ml):</label>
-            <input type="number" id="fuelRemaining" min="0">
-        </div>
-        
-        <button onclick="calculate()">Calcola Autonomia</button>
+        <form id="fuelForm">
+            <div class="input-group">
+                <label for="tankCapacity">Capacità serbatoio (ml):</label>
+                <input type="number" id="tankCapacity" step="1" min="1" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="timeUsed">Tempo di utilizzo (minuti):</label>
+                <input type="number" id="timeUsed" step="1" min="1" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="fuelRemaining">Benzina rimasta (ml):</label>
+                <input type="number" id="fuelRemaining" step="1" min="0" required>
+            </div>
+            
+            <button type="submit" class="calculate-btn">Calcola Autonomia</button>
+        </form>
         
         <div id="result" class="result">
             <div class="result-value" id="resultValue">0</div>
@@ -128,53 +174,63 @@
     </div>
 
     <script>
-        function calculate() {
-            var tankCapacity = parseFloat(document.getElementById('tankCapacity').value);
-            var timeUsed = parseFloat(document.getElementById('timeUsed').value);
-            var fuelRemaining = parseFloat(document.getElementById('fuelRemaining').value);
+        document.getElementById('fuelForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            document.getElementById('error').innerHTML = '';
-            document.getElementById('result').style.display = 'none';
+            // Ottieni i valori dai campi input
+            const tankCapacity = parseFloat(document.getElementById('tankCapacity').value);
+            const timeUsed = parseFloat(document.getElementById('timeUsed').value);
+            const fuelRemaining = parseFloat(document.getElementById('fuelRemaining').value);
             
-            if (!tankCapacity || !timeUsed || fuelRemaining < 0) {
-                document.getElementById('error').innerHTML = 'Inserisci tutti i valori correttamente!';
-                return;
-            }
+            // Reset errori precedenti
+            document.getElementById('error').textContent = '';
+            document.getElementById('result').classList.remove('show');
             
+            // Validazione input
             if (fuelRemaining > tankCapacity) {
-                document.getElementById('error').innerHTML = 'La benzina rimasta non può essere maggiore della capacità!';
+                document.getElementById('error').textContent = 'La benzina rimasta non può essere maggiore della capacità del serbatoio!';
                 return;
             }
             
             if (fuelRemaining === tankCapacity) {
-                document.getElementById('error').innerHTML = 'Non c\'è stato consumo di benzina!';
+                document.getElementById('error').textContent = 'Se la benzina rimasta è uguale alla capacità, non c\'è stato consumo!';
                 return;
             }
             
-            var fuelConsumed = tankCapacity - fuelRemaining;
+            // Calcola il consumo
+            const fuelConsumed = tankCapacity - fuelRemaining;
             
             if (fuelConsumed <= 0) {
-                document.getElementById('error').innerHTML = 'Errore nel calcolo del consumo!';
+                document.getElementById('error').textContent = 'Errore nel calcolo: consumo non valido!';
                 return;
             }
             
-            var fuelConsumptionPerMinute = fuelConsumed / timeUsed;
-            var totalMinutesWithFullTank = tankCapacity / fuelConsumptionPerMinute;
+            // Calcola il consumo per minuto
+            const fuelConsumptionPerMinute = fuelConsumed / timeUsed;
             
-            var minutes = Math.floor(totalMinutesWithFullTank);
-            var decimalPart = totalMinutesWithFullTank - minutes;
-            var seconds = Math.floor(decimalPart * 60 + 0.5);
+            // Calcola quanti minuti si possono fare con il serbatoio pieno
+            const totalMinutesWithFullTank = tankCapacity / fuelConsumptionPerMinute;
             
-            var resultText;
-            if (seconds === 0) {
-                resultText = minutes + 'm';
-            } else {
-                resultText = minutes + 'm ' + seconds + 's';
-            }
+            // Converti in minuti e secondi
+            const minutes = Math.floor(totalMinutesWithFullTank);
+            const seconds = Math.round((totalMinutesWithFullTank - minutes) * 60);
             
-            document.getElementById('resultValue').innerHTML = resultText;
-            document.getElementById('result').style.display = 'block';
-        }
+            // Mostra il risultato
+            const resultText = seconds === 0 ? `${minutes}m` : `${minutes}m ${seconds}s`;
+            document.getElementById('resultValue').textContent = resultText;
+            document.getElementById('result').classList.add('show');
+        });
+        
+        // Aggiungi effetto di focus sui campi input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
     </script>
 </body>
 </html>
